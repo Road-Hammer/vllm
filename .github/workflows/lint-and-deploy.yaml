@@ -30,7 +30,9 @@ jobs:
           version: v3.10.1
 
       - name: Run chart-testing (lint)
-        run: ct lint --target-branch ${{ github.event.repository.default_branch }} --chart-dirs examples/online_serving/chart-helm --charts examples/online_serving/chart-helm
+        env:
+          TARGET_BRANCH: ${{ github.event.repository.default_branch }}
+        run: ct lint --target-branch $TARGET_BRANCH --chart-dirs examples/online_serving/chart-helm --charts examples/online_serving/chart-helm
 
       - name: Setup minio
         run: |
