@@ -32,7 +32,7 @@ jobs:
       - name: Run chart-testing (lint)
         env:
           TARGET_BRANCH: ${{ github.event.repository.default_branch }}
-        run: ct lint --target-branch $TARGET_BRANCH --chart-dirs examples/online_serving/chart-helm --charts examples/online_serving/chart-helm
+        run: ct lint --target-branch "$TARGET_BRANCH" --chart-dirs examples/online_serving/chart-helm --charts examples/online_serving/chart-helm
 
       - name: Setup minio
         run: |
@@ -79,9 +79,12 @@ jobs:
           CODE="$(curl -v -f --location http://localhost:8001/v1/completions \
                   --header "Content-Type: application/json" \
                   --data '{
-                          "model": "opt-125m",
-                          "prompt": "San Francisco is a",
-                          "max_tokens": 7,
-                          "temperature": 0
-                  }'):$CODE"
-          echo "$CODE"
+                      "model": "facebook/opt-125m",
+                      "prompt": "San Francisco is a",
+                      "max_tokens": 7,
+                      "temperature": 0
+                  }' \
+                  -w "%{http_code}" -o /dev/null)"
+          if [ "$CODE" != "200" ]; then
+            exit 1
+          fi
